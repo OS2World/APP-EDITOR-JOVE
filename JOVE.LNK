@@ -1,0 +1,8 @@
+keys.obj+ funcdefs.obj+ abbrev.obj+ ask.obj+ buf.obj+ c.obj+
+case.obj+ ctype.obj+ delete.obj+ extend.obj+ argcount.obj +
+insert.obj+ os2io.obj+ jove.obj+os2iproc.obj+ macros.obj+ marks.obj+ misc.obj+ move.obj+
+paragrap.obj+ os2proc.obj+ re.obj+ re1.obj+ scandir.obj+ +
+list.obj+ keymaps.obj+ tune.obj+ os2util.obj+ vars.obj+ wind.obj+
+fmt.obj+ disp.obj+ term.obj+ version.obj+ fp.obj+ screen.obj+ os2getch.obj+
+os2scrwrite.obj+ threads.obj+
+d:\c600\lib\setargv+d:\c600\lib\fileinfo, xjove.exe,,,jove.def

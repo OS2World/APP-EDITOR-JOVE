@@ -1,0 +1,59 @@
+/***************************************************************************
+ * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
+ * is provided to you without charge, and with no warranty.  You may give  *
+ * away copies of JOVE, including sources, provided that this notice is    *
+ * included in all the files.                                              *
+ ***************************************************************************/
+
+This is an OS2-port of JOVE Version 4.14. Like the UNIX version, it will
+run interactive shells and i-processes (except for suspending processes).
+This port works with HPFS. I have tried it on OS/2 ver. 1.3, but it probably
+works with earlier versions.
+
+To install, copy the four files:
+	jove.exe
+	portsrv.exe
+	setmaps.exe
+	kbd.exe
+to a directory included in your PATH environment. If you have an
+initialization file (jove.rc), set the enviroment variable JOVERC
+to the full pathname/filename of this file.
+
+The default for JOVE is to start with 25 lines per page mode. You
+may start the editor in a 50 lines mode by defining the environment
+variable VGA or in 43 lines mode by defining the environemnt variable
+EGA.
+
+You should also set the TMP environment to the directory where JOVE
+can put its temporary files. I have noticed some problems if TMP points
+to a ram disk, probably because it needs longer filenames than the FAT
+ram disks would allow.
+
+When invoking the editor, jove.exe spawns the keyboard process kbd.exe,
+which will handle keyboard input when running an interactive shell or an
+i-process. In that case, the kbd input is transferred to jove.exe by pipes.
+Upon completion of all i-processes and shells the input control 
+returns automatically to jove.exe. I have not noticed any significant 
+reduction in speed when the input is handled by kbd.exe on my system
+(OS/2 1.3 386/33), probably because OS/2 gives priority to processes
+that handle the keyboard.
+
+When starting an intercactive process/shell jove spawns the portsrv.exe
+process which transfers the output of the interactive process to
+jove.exe through pipes. portsrv.exe is multi-threaded. there are 2 threads 
+which watch for completion of the interactive process/shell or output
+from this process. If you run simultaneously many interactive
+processes/shells you may need to change the THREADS parameters in your 
+config.sys file to allow for a larger number of threads.
+
+When running i-process/shell you must bind the command "process-newline"
+to a key, and use that key whenever you want to send input a process.
+As in the DOS-port  pressing the ENTER key is equivalent to pressing control+M,
+which is bount to "newline",  you must bind another key, instead of 
+the ENTER key, to  "process-newline". This is somewhat inconvenient 
+until you get used to it. 
+
+
+Ported by : Dov Bai bai@mssun7.msi.cornell.edu
+
+July 7, 1991

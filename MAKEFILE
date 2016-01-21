@@ -1,0 +1,76 @@
+###########################################################################
+# This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE #
+# is provided to you without charge, and with no warranty.  You may give  #
+# away copies of JOVE, including sources, provided that this notice is    #
+# included in all the files.                                              #
+###########################################################################
+
+
+MEM = L				# M for medium or L for large
+DEB =				# use -Zi and MEM = M for debugging
+LIB = D:\C600\LIB
+DEFINES = -DMSDOS -DIBMPC -DOS2 -DOS2IPROCS -DPIPEPROCS -DBACKUPFILES
+#WILD_CARD = D:\C600\LIB\SETARGV.OBJ
+WILD_CARD =
+#
+# define LINT_ARGS to use function prototypes
+#
+#CFLAGS =  -J -Zp -A$(MEM) -W4 -FPi87 -B2 E:\C600\BINP\C2L.EXE -Zr -Od -Zi -Gs $(DEB)	$(DEFINES)
+CFLAGS = -J -Zp -A$(MEM) -W4 -Oc -FPc -Gs $(DEB) $(DEFINES)
+LIB = D:\C600\LIB
+#
+# linker flags: for debugging use /NOE /NOI /F /B /PACKC /STACK:0x2000
+#
+LDFLAGS = /NOE/NOI/MAP/F/B/E/PACKC/PACKD/STACK:0x4000
+#
+# set VPATH as below if you have sources in SRC
+#						     
+SRC = .
+# VPATH = .;..	# should read .;$(SRC) - but doesn't work
+
+OBJECTS = keys.obj funcdefs.obj abbrev.obj ask.obj buf.obj c.obj \
+	case.obj ctype.obj delete.obj extend.obj argcount.obj \
+	insert.obj os2io.obj jove.obj macros.obj marks.obj misc.obj move.obj \
+	paragrap.obj os2proc.obj os2iproc.obj  re.obj re1.obj scandir.obj \
+	list.obj keymaps.obj tune.obj os2util.obj vars.obj wind.obj \
+	fmt.obj disp.obj term.obj version.obj fp.obj screen.obj os2getch.obj\
+	os2scrwrite.obj threads.obj
+
+HEADERS = ctype.h io.h jove.h re.h list.h temp.h termcap.h tune.h externs.h
+
+all:jove.exe portsrv.exe kbd.exe
+
+jove.exe:	$(OBJECTS) $(HEADERS)
+#	PWBRMAKE -o makefile.bsc *.sbr
+	link  $(LDFLAGS) @jove.lnk;
+$(OBJECTS): $(HEADERS)
+
+setmaps.exe:	setmaps.obj funcdefs.c setmaps.def
+	cl $(CFLAGS) $(WILD_CARD) setmaps.obj setmaps.def
+
+setmaps.obj:	funcdefs.c keys.txt
+	cl $(CFLAGS) $(WILD_CARD) $(SRC)\setmaps.c
+
+keys.c:	setmaps.exe keys.txt
+	setmaps < keys.txt > keys.c
+
+keys.obj:	keys.c jove.h
+	$(CC) $(CFLAGS) -I$(SRC) -c keys.c
+
+# to avoid accidental loss under unix
+tune.c:	tune.dos
+	copy tune.dos tune.c
+
+tune.obj: tune.c
+	$(CC) $(CFLAGS) -I$(SRC) -c tune.c
+
+clean:
+	-rm *.obj setmaps.exe keys.c *.bak *.map
+
+# portsrv
+portsrv.exe: os2portsrv.obj portsrv.def
+     cl -Feportsrv.exe -MT $(DEFINES) os2portsrv.obj portsrv.def $(WILD_CARD) /link $(LDFLAGS)
+os2portsrv.obj: os2portsrv.c jove.h wait.h
+     cl -c -MT $(CFLAGS) $(DEFINES) os2portsrv.c
+kbd.exe : os2kbd.c portsrv.def
+     cl $(CFLAGS) -Fekbd.exe $(WILD_CARD) os2kbd.c kbd.def /link $(LDFLAGS)
